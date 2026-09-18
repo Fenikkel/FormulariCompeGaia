@@ -92,6 +92,26 @@ form.addEventListener('change', () => {
   document.getElementById('total').textContent = `Total: ${readResult().total} punts`;
 });
 nameInput.addEventListener('input', () => nameInput.removeAttribute('aria-invalid'));
+form.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && !event.isComposing) {
+    event.preventDefault();
+  }
+});
+
+function scrollToTop() {
+  function resetPosition() {
+    if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }
+  resetPosition();
+  // Repetix després que el navegador aplique l’altura de la pantalla de resum.
+  requestAnimationFrame(() => {
+    resetPosition();
+    requestAnimationFrame(resetPosition);
+  });
+}
 
 function showScoreSummary(containerId, label, prefix, count, result) {
   const container = document.getElementById(containerId);
@@ -174,7 +194,8 @@ form.addEventListener('submit', async (event) => {
     form.hidden = true;
     statusMessage.textContent = '';
     document.getElementById('confirmacio').hidden = false;
-    document.getElementById('agraiment').focus();
+    document.getElementById('agraiment').focus({ preventScroll: true });
+    scrollToTop();
   } catch (error) {
     statusMessage.textContent = error.name === 'AbortError'
       ? 'La connexió ha tardat massa. Torna-ho a provar sense canviar les dades.'

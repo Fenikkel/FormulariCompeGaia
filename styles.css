@@ -1,11 +1,13 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: #fff; color: #202020; font-family: system-ui, sans-serif; line-height: 1.5; }
-main { max-width: 520px; margin: 0 auto; padding: 20px 16px 32px; }
-.logo { display: block; width: 100%; max-width: 256px; max-height: 256px; height: auto; object-fit: contain; margin: 0 auto 40px; }
+main { max-width: 520px; margin: 0 auto; padding: 20px 16px 32px; overflow-anchor: none; }
+.logo { display: block; width: 100%; max-width: 256px; max-height: 256px; height: auto; object-fit: contain; margin: 0 auto 64px; }
 h1 { font-size: 1.6rem; }
 h2 { margin-top: 28px; font-size: 1.15rem; }
 fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
 input[type="text"] { display: block; width: 100%; min-height: 48px; margin-top: 8px; padding: 10px; border: 1px solid #666; border-radius: 0; font: inherit; }
+#formulari > section { margin-top: 40px; }
+#formulari > section > h2 { margin-top: 0; }
 .puntuacio { margin-bottom: 20px; }
 .puntuacio legend { padding: 0; margin-bottom: 8px; font-weight: 600; }
 .opcions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -15,12 +17,12 @@ input[type="text"] { display: block; width: 100%; min-height: 48px; margin-top: 
 .opcio input:checked + span { background: #202020; color: #fff; font-weight: 700; }
 .opcio input:focus-visible + span, input[type="text"]:focus-visible, button:focus-visible { outline: 3px solid #005fcc; outline-offset: 3px; }
 fieldset:disabled .opcio span { cursor: default; }
-.total { font-size: 1.4rem; font-weight: 700; }
+.total { margin: 40px 0 32px; font-size: 1.4rem; font-weight: 700; }
 button { width: 100%; min-height: 52px; padding: 12px; border: 1px solid #202020; border-radius: 0; background: #202020; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
 button:disabled { background: #555; cursor: default; }
 #estat { overflow-wrap: anywhere; }
 .resum-identitat dt { color: #555; }
-.resum-panel { background: #f1f1f1; padding: 20px 16px; }
+.resum-panel { border: 1px solid #555; padding: 20px 16px; }
 .resum-identitat { margin: 0; }
 .resum-identitat dd { margin: 4px 0 0; font-size: 1.2rem; font-weight: 600; overflow-wrap: anywhere; }
 .resum-total { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 16px; margin: 24px 0; background: #fff; }
