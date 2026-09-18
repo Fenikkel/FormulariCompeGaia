@@ -153,8 +153,17 @@ form.addEventListener('submit', async (event) => {
       clearTimeout(timeout);
     }
     saved = true;
-    statusMessage.textContent = 'Resultats guardats correctament.';
-    saveButton.textContent = 'RESULTATS GUARDATS';
+    document.getElementById('resum-nom').textContent = pendingResult.nombre;
+    document.getElementById('resum-blocs').textContent = Array.from(
+      { length: 10 }, (_, i) => pendingResult[`bloque${i + 1}`]
+    ).join(', ');
+    document.getElementById('resum-vies').textContent = `${pendingResult.via1}, ${pendingResult.via2}`;
+    document.getElementById('resum-total').textContent = `${pendingResult.total} punts`;
+    form.hidden = true;
+    document.getElementById('introduccio').hidden = true;
+    statusMessage.textContent = '';
+    document.getElementById('confirmacio').hidden = false;
+    document.getElementById('agraiment').focus();
   } catch (error) {
     statusMessage.textContent = error.name === 'AbortError'
       ? 'La connexió ha tardat massa. Torna-ho a provar sense canviar les dades.'

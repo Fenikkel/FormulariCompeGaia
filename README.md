@@ -74,7 +74,7 @@ Documentació oficial: [claus API](https://supabase.com/docs/guides/getting-star
 - Cada control admet una sola selecció. Amb tots els blocs a 15 i les vies a 50, el total és 250.
 - Una combinació de blocs `[15, 5, 0, 15, 5, 15, 0, 5, 15, 5]` i vies `[50, 20]` suma **150**.
 - Un nom buit o amb només espais mostra un missatge en valencià i no s’envia.
-- Durant l’enviament, el formulari queda bloquejat. Després de guardar, conserva els valors i mostra «Resultats guardats correctament.»
+- Durant l’enviament, el formulari queda bloquejat. Després de guardar, s’oculta i mostra «Gràcies per participar» amb un resum del nom, els blocs, les vies i el total enviats.
 - Si falla la connexió, conserva els valors i permet reintentar. Un reintent amb les mateixes dades reutilitza l’UUID i comprova un possible guardat anterior. Si canvies les dades, es considera un altre enviament.
 - Revisa la web a 320 px i amb el teclat: Tab per a entrar als grups i fletxes per a canviar puntuacions.
 - Amb Supabase configurat, envia resultats des de dos telèfons i comprova que apareixen en `resultados` i en la consulta anterior.

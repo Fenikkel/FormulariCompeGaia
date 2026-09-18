@@ -10,7 +10,7 @@
 <body>
   <main>
     <h1>Resultats d’escalada</h1>
-    <p>Indica la puntuació de cada bloc i via.</p>
+    <p id="introduccio">Indica la puntuació de cada bloc i via.</p>
     <noscript>Cal activar JavaScript per a guardar els resultats.</noscript>
     <form id="resultats" novalidate>
       <fieldset id="formulari">
@@ -29,6 +29,19 @@
         <button id="guardar" type="submit">GUARDAR RESULTATS</button>
       </fieldset>
     </form>
+    <section id="confirmacio" aria-labelledby="agraiment" hidden>
+      <h2 id="agraiment" tabindex="-1">Gràcies per participar</h2>
+      <dl class="resum">
+        <dt>Nom</dt>
+        <dd id="resum-nom"></dd>
+        <dt>Blocs (1–10)</dt>
+        <dd id="resum-blocs"></dd>
+        <dt>Vies (1–2)</dt>
+        <dd id="resum-vies"></dd>
+        <dt>Total</dt>
+        <dd id="resum-total"></dd>
+      </dl>
+    </section>
     <p id="estat" role="status" aria-live="polite" aria-atomic="true"></p>
   </main>
 </body>
