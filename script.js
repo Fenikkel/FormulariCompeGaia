@@ -1,7 +1,6 @@
 // Copia ací la URL del projecte i la clau publicable de Supabase.
 const SUPABASE_URL = 'https://snxkaxlxypmqevfsksul.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dbfGWZXvN3cVWrYNnIE2tg_D-x-siVb';
-// ContrasenyaCompe2026
 
 const form = document.getElementById('resultats');
 const fields = document.getElementById('formulari');
@@ -12,6 +11,31 @@ let sending = false;
 let saved = false;
 let pendingResult = null;
 let pendingSignature = '';
+
+function storageError(response, error) {
+  // No registrem el nom, les puntuacions ni les claus del participant.
+  console.error('Error de Supabase:', {
+    status: response.status, code: error.code, message: error.message,
+    details: error.details, hint: error.hint
+  });
+  const reference = ` (HTTP ${response.status}${error.code ? `, ${error.code}` : ''})`;
+  if (error.code === '42501') {
+    return new Error('Supabase no permet guardar: cal revisar els permisos d’inserció i la política de la taula resultados.' + reference);
+  }
+  if (error.code === '23514') {
+    return new Error('La taula ha rebutjat el nom, les puntuacions o el total. Cal revisar les restriccions de resultados.' + reference);
+  }
+  if (error.code === '23502') {
+    return new Error('La taula exigix un camp que no s’ha enviat. Cal revisar la configuració de resultados.' + reference);
+  }
+  if (error.code === 'PGRST204' || error.code === 'PGRST205' || error.code === '42P01' || error.code === '42703') {
+    return new Error('La taula resultados o els seus camps no coincidixen amb la configuració del formulari.' + reference);
+  }
+  if (response.status === 401 || response.status === 403) {
+    return new Error('Supabase ha rebutjat l’accés. Cal revisar la clau publicable i els permisos de la taula.' + reference);
+  }
+  return new Error('No s’han pogut guardar els resultats. Torna-ho a provar. Si continua, avisa l’organització.' + reference);
+}
 
 function createScores(containerId, prefix, label, count, scores) {
   const container = document.getElementById(containerId);
@@ -116,13 +140,13 @@ form.addEventListener('submit', async (event) => {
           const check = await fetch(`${endpoint}?id=eq.${pendingResult.id}&select=*`, {
             headers, signal: controller.signal
           });
-          if (!check.ok) throw new Error('No s’ha pogut confirmar el guardat. Torna-ho a provar.');
+          if (!check.ok) throw storageError(check, await check.json().catch(() => ({})));
           const rows = await check.json();
           if (!rows.some(row => Object.entries(pendingResult).every(([key, value]) => row[key] === value))) {
             throw new Error('No s’ha pogut confirmar el guardat. Torna-ho a provar.');
           }
         } else {
-          throw new Error('No s’han pogut guardar els resultats. Torna-ho a provar. Si continua, avisa l’organització.');
+          throw storageError(response, error);
         }
       }
     } finally {

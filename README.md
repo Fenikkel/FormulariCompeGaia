@@ -80,3 +80,15 @@ Documentació oficial: [claus API](https://supabase.com/docs/guides/getting-star
 - Amb Supabase configurat, envia resultats des de dos telèfons i comprova que apareixen en `resultados` i en la consulta anterior.
 
 El bloqueig dura fins que es recarrega la pàgina; no es prohibixen noms repetits ni noves participacions després de recarregar. No hi ha enviaments automàtics ni guardat sense connexió.
+
+## Si Supabase rebutja el guardat
+
+El missatge inclou l’estat HTTP i el codi de Supabase. La consola del navegador mostra una entrada **Error de Supabase** amb la causa tècnica, sense afegir el nom, les puntuacions enviades ni les claus. En un ordinador, obri les ferramentes de desenvolupament i la pestanya **Console**, i prova de guardar.
+
+- `42501`: revisa els permisos INSERT del rol `anon` i la política d’inserció.
+- `23514`: una restricció de la taula ha rebutjat les dades; el missatge de consola identifica la restricció.
+- `23502`: falta un camp obligatori o un valor per defecte en la taula.
+- `PGRST204` / `PGRST205`: revisa els noms de la taula i dels camps.
+- HTTP 401/403: revisa la clau publicable i els permisos.
+
+Després de publicar un canvi, espera que acabe el desplegament de GitHub Pages i recarrega la pàgina sense la memòria cau.
