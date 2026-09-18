@@ -1,5 +1,5 @@
 // Copia ací la URL del projecte i la clau publicable de Supabase.
-const SUPABASE_URL = 'https://snxkaxlxypmqevfsksul.supabase.co/rest/v1/';
+const SUPABASE_URL = 'https://snxkaxlxypmqevfsksul.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dbfGWZXvN3cVWrYNnIE2tg_D-x-siVb';
 // ContrasenyaCompe2026
 
