@@ -93,6 +93,20 @@ form.addEventListener('change', () => {
 });
 nameInput.addEventListener('input', () => nameInput.removeAttribute('aria-invalid'));
 
+function showScoreSummary(containerId, label, prefix, count, result) {
+  const container = document.getElementById(containerId);
+  container.replaceChildren();
+  for (let i = 1; i <= count; i++) {
+    const row = document.createElement('div');
+    const title = document.createElement('dt');
+    title.textContent = `${label} ${i}`;
+    const score = document.createElement('dd');
+    score.textContent = `${result[`${prefix}${i}`]} punts`;
+    row.append(title, score);
+    container.append(row);
+  }
+}
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (sending || saved) return;
@@ -154,13 +168,10 @@ form.addEventListener('submit', async (event) => {
     }
     saved = true;
     document.getElementById('resum-nom').textContent = pendingResult.nombre;
-    document.getElementById('resum-blocs').textContent = Array.from(
-      { length: 10 }, (_, i) => pendingResult[`bloque${i + 1}`]
-    ).join(', ');
-    document.getElementById('resum-vies').textContent = `${pendingResult.via1}, ${pendingResult.via2}`;
+    showScoreSummary('resum-blocs', 'Bloc', 'bloque', 10, pendingResult);
+    showScoreSummary('resum-vies', 'Via', 'via', 2, pendingResult);
     document.getElementById('resum-total').textContent = `${pendingResult.total} punts`;
     form.hidden = true;
-    document.getElementById('introduccio').hidden = true;
     statusMessage.textContent = '';
     document.getElementById('confirmacio').hidden = false;
     document.getElementById('agraiment').focus();

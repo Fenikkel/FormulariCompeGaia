@@ -9,13 +9,11 @@
 </head>
 <body>
   <main>
-    <h1>Resultats d’escalada</h1>
-    <p id="introduccio">Indica la puntuació de cada bloc i via.</p>
     <noscript>Cal activar JavaScript per a guardar els resultats.</noscript>
     <form id="resultats" novalidate>
       <fieldset id="formulari">
         <legend class="visually-hidden">Resultats del participant</legend>
-        <label for="nombre">Nom de l’escalador</label>
+        <label for="nombre">Nom</label>
         <input id="nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="estat">
         <section aria-labelledby="titol-blocs">
           <h2 id="titol-blocs">BLOCS</h2>
@@ -31,16 +29,19 @@
     </form>
     <section id="confirmacio" aria-labelledby="agraiment" hidden>
       <h2 id="agraiment" tabindex="-1">Gràcies per participar</h2>
-      <dl class="resum">
+      <dl class="resum-identitat">
         <dt>Nom</dt>
         <dd id="resum-nom"></dd>
-        <dt>Blocs (1–10)</dt>
-        <dd id="resum-blocs"></dd>
-        <dt>Vies (1–2)</dt>
-        <dd id="resum-vies"></dd>
-        <dt>Total</dt>
-        <dd id="resum-total"></dd>
       </dl>
+      <p class="resum-total"><span>Total</span><strong id="resum-total"></strong></p>
+      <section aria-labelledby="resum-titol-blocs">
+        <h3 id="resum-titol-blocs">Blocs</h3>
+        <dl id="resum-blocs" class="resum-puntuacions"></dl>
+      </section>
+      <section aria-labelledby="resum-titol-vies">
+        <h3 id="resum-titol-vies">Vies</h3>
+        <dl id="resum-vies" class="resum-puntuacions"></dl>
+      </section>
     </section>
     <p id="estat" role="status" aria-live="polite" aria-atomic="true"></p>
   </main>
