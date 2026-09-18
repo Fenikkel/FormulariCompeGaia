@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ca-valencia">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resultats d’escalada</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Resultats d’escalada</h1>
+    <p>Indica la puntuació de cada bloc i via.</p>
+    <noscript>Cal activar JavaScript per a guardar els resultats.</noscript>
+    <form id="resultats" novalidate>
+      <fieldset id="formulari">
+        <legend class="visually-hidden">Resultats del participant</legend>
+        <label for="nombre">Nom de l’escalador</label>
+        <input id="nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="estat">
+        <section aria-labelledby="titol-blocs">
+          <h2 id="titol-blocs">BLOCS</h2>
+          <div id="blocs"></div>
+        </section>
+        <section aria-labelledby="titol-vies">
+          <h2 id="titol-vies">VIES</h2>
+          <div id="vies"></div>
+        </section>
+        <p class="total"><output id="total" aria-live="polite">Total: 0 punts</output></p>
+        <button id="guardar" type="submit">GUARDAR RESULTATS</button>
+      </fieldset>
+    </form>
+    <p id="estat" role="status" aria-live="polite" aria-atomic="true"></p>
+  </main>
+</body>
+</html>
