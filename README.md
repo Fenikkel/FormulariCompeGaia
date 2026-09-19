@@ -1,6 +1,6 @@
 # Resultats d’escalada
 
-Web senzilla en valencià, sense dependències. Cada participant indica el nom, el correu, deu blocs (0/5/15) i dos vies (0/20/50). El total màxim és 250 punts. Les dades de tots els dispositius es guarden juntes en Supabase; no s’utilitza localStorage.
+Web senzilla en valencià, sense dependències. Cada participant indica el nom, el correu, deu blocs (0/5/15) i dos vies (0/20/50), o pot participar en mode anònim sense facilitar dades personals. El total màxim és 250 punts. Les dades de tots els dispositius es guarden juntes en Supabase. `localStorage` només conserva l’identificador del mode anònim; no guarda resultats.
 
 ## 1. Configurar l’emmagatzematge gratuït
 
@@ -66,7 +66,7 @@ async function llegirResultats() {
 llegirResultats().then(console.log).catch(console.error);
 ```
 
-Cada fila pública conté `id`, `nombre`, `bloque1`…`bloque10`, `via1`, `via2`, `total` i `updated_at` (data de l’últim enviament). El correu no es pot consultar públicament. Quan mostres noms en una altra web, usa `textContent` per a inserir-los com a text.
+Cada fila pública conté `id`, `nombre`, `bloque1`…`bloque10`, `via1`, `via2`, `total` i `updated_at` (data de l’últim enviament). El correu o identificador intern no es pot consultar públicament. Quan mostres noms en una altra web, usa `textContent` per a inserir-los com a text.
 
 Documentació oficial: [claus API](https://supabase.com/docs/guides/getting-started/api-keys), [API REST](https://supabase.com/docs/guides/api/creating-routes) i [polítiques de dades](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
@@ -76,12 +76,13 @@ Documentació oficial: [claus API](https://supabase.com/docs/guides/getting-star
 - Cada control admet una sola selecció. Amb tots els blocs a 15 i les vies a 50, el total és 250.
 - Una combinació de blocs `[15, 5, 0, 15, 5, 15, 0, 5, 15, 5]` i vies `[50, 20]` suma **150**.
 - Un nom buit, un correu buit o un correu invàlid mostra un missatge en valencià i no s’envia.
+- En activar «Anònim», desapareixen el nom i el correu. El resultat es guarda com `Anònim` i utilitza internament una adreça amb format `anonim-UUID@anonim.invalid`. El UUID es conserva en `localStorage`, de manera que el mateix navegador reutilitza la identitat després de recarregar i actualitza el resultat anterior.
 - Durant l’enviament, el formulari queda bloquejat. Després de guardar, s’oculta i mostra «Gràcies per participar» amb un resum del correu i les dades enviades.
 - Si falla la connexió, conserva els valors i permet reintentar. Un correu nou crea una fila; un correu ja registrat reemplaça el nom, les puntuacions i el total anteriors.
 - Revisa la web a 320 px i amb el teclat: Tab per a entrar als grups i fletxes per a canviar puntuacions.
 - Amb Supabase configurat, envia resultats des de dos telèfons i comprova que apareixen en `resultados` i en la consulta anterior.
 
-El bloqueig dura fins que es recarrega la pàgina. Els noms poden repetir-se, però cada correu només té un resultat. Qualsevol persona que conega un correu registrat pot reemplaçar el seu resultat perquè esta web no té autenticació. No hi ha enviaments automàtics ni guardat sense connexió.
+El bloqueig dura fins que es recarrega la pàgina. Els noms poden repetir-se, però cada correu només té un resultat. Qualsevol persona que conega un correu registrat pot reemplaçar el seu resultat perquè esta web no té autenticació. En mode anònim, canviar de navegador, usar navegació privada o esborrar les dades locals genera una identitat nova; diverses persones que compartixen el mateix navegador també compartixen la identitat anònima. No hi ha guardat de resultats sense connexió.
 
 ## Si Supabase rebutja el guardat
 
@@ -90,7 +91,7 @@ El missatge inclou l’estat HTTP i el codi de Supabase. La consola del navegado
 - `42501`: revisa el permís d’execució de `guardar_resultado` per al rol `anon`.
 - `23514`: una restricció de la taula ha rebutjat les dades; el missatge de consola identifica la restricció.
 - `23502`: falta un camp obligatori o un valor per defecte en la taula.
-- `PGRST202`: executa el fitxer `supabase.sql` actualitzat per a crear la funció de guardat.
+- `PGRST202`: executa el fitxer `supabase.sql` per a crear la funció de guardat en una instal·lació nova.
 - `PGRST204` / `PGRST205`: revisa els noms de la taula i dels camps.
 - HTTP 401/403: revisa la clau publicable i els permisos.
 

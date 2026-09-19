@@ -14,10 +14,16 @@
     <form id="resultats" novalidate>
       <fieldset id="formulari">
         <legend class="visually-hidden">Resultats del participant</legend>
-        <label for="nombre">Nom</label>
-        <input id="nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="estat">
-        <label class="label-correu" for="correo">Correu electrònic</label>
-        <input id="correo" name="correo" type="email" autocomplete="email" inputmode="email" required aria-describedby="estat">
+        <label class="control-anonim" for="anonimo">
+          <input id="anonimo" name="anonimo" type="checkbox">
+          <span>Anònim</span>
+        </label>
+        <div id="dades-personals">
+          <label for="nombre">Nom</label>
+          <input id="nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="estat">
+          <label class="label-correu" for="correo">Correu electrònic</label>
+          <input id="correo" name="correo" type="email" autocomplete="email" inputmode="email" required aria-describedby="estat">
+        </div>
         <section aria-labelledby="titol-blocs">
           <h2 id="titol-blocs">BLOCS</h2>
           <div id="blocs"></div>
@@ -36,7 +42,7 @@
       <dl class="resum-identitat">
         <dt>Nom</dt>
         <dd id="resum-nom"></dd>
-        <dt>Correu electrònic</dt>
+        <dt id="resum-correu-etiqueta">Correu electrònic</dt>
         <dd id="resum-correu"></dd>
       </dl>
       <p class="resum-total"><span>Total</span><strong id="resum-total"></strong></p>

@@ -5,6 +5,8 @@ main { max-width: 520px; margin: 0 auto; padding: 20px 16px 32px; overflow-ancho
 h1 { font-size: 1.6rem; }
 h2 { margin-top: 28px; font-size: 1.15rem; }
 fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.control-anonim { display: flex; align-items: center; gap: 10px; min-height: 48px; margin-bottom: 24px; font-weight: 600; cursor: pointer; }
+.control-anonim input { width: 24px; height: 24px; margin: 0; accent-color: #202020; }
 input[type="text"], input[type="email"] { display: block; width: 100%; min-height: 48px; margin-top: 8px; padding: 10px; border: 1px solid #666; border-radius: 0; font: inherit; }
 .label-correu { display: block; margin-top: 24px; }
 #formulari > section { margin-top: 40px; }
