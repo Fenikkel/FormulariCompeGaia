@@ -5,12 +5,13 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_dbfGWZXvN3cVWrYNnIE2tg_D-x-siVb
 const form = document.getElementById('resultats');
 const fields = document.getElementById('formulari');
 const nameInput = document.getElementById('nombre');
+const emailInput = document.getElementById('correo');
 const saveButton = document.getElementById('guardar');
 const statusMessage = document.getElementById('estat');
 let sending = false;
 let saved = false;
 let pendingResult = null;
-let pendingSignature = '';
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function storageError(response, error) {
   // No registrem el nom, les puntuacions ni les claus del participant.
@@ -20,7 +21,7 @@ function storageError(response, error) {
   });
   const reference = ` (HTTP ${response.status}${error.code ? `, ${error.code}` : ''})`;
   if (error.code === '42501') {
-    return new Error('Supabase no permet guardar: cal revisar els permisos d’inserció i la política de la taula resultados.' + reference);
+    return new Error('Supabase no permet guardar: cal revisar el permís d’execució de la funció guardar_resultado.' + reference);
   }
   if (error.code === '23514') {
     return new Error('La taula ha rebutjat el nom, les puntuacions o el total. Cal revisar les restriccions de resultados.' + reference);
@@ -28,8 +29,11 @@ function storageError(response, error) {
   if (error.code === '23502') {
     return new Error('La taula exigix un camp que no s’ha enviat. Cal revisar la configuració de resultados.' + reference);
   }
+  if (error.code === 'PGRST202') {
+    return new Error('No s’ha trobat la funció de guardat. Executa el fitxer supabase.sql actualitzat.' + reference);
+  }
   if (error.code === 'PGRST204' || error.code === 'PGRST205' || error.code === '42P01' || error.code === '42703') {
-    return new Error('La taula resultados o els seus camps no coincidixen amb la configuració del formulari.' + reference);
+    return new Error('La base de dades no coincidix amb la configuració del formulari. Executa el fitxer supabase.sql actualitzat.' + reference);
   }
   if (response.status === 401 || response.status === 403) {
     return new Error('Supabase ha rebutjat l’accés. Cal revisar la clau publicable i els permisos de la taula.' + reference);
@@ -71,7 +75,10 @@ createScores('vies', 'via', 'Via', 2, [0, 20, 50]);
 
 function readResult() {
   const data = new FormData(form);
-  const result = { nombre: nameInput.value.trim() };
+  const result = {
+    nombre: nameInput.value.trim(),
+    correo: emailInput.value.trim().toLowerCase()
+  };
   let total = 0;
   for (const [prefix, count, allowed] of [['bloque', 10, [0, 5, 15]], ['via', 2, [0, 20, 50]]]) {
     for (let i = 1; i <= count; i++) {
@@ -92,6 +99,7 @@ form.addEventListener('change', () => {
   document.getElementById('total').textContent = `Total: ${readResult().total} punts`;
 });
 nameInput.addEventListener('input', () => nameInput.removeAttribute('aria-invalid'));
+emailInput.addEventListener('input', () => emailInput.removeAttribute('aria-invalid'));
 form.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' && !event.isComposing) {
     event.preventDefault();
@@ -137,6 +145,13 @@ form.addEventListener('submit', async (event) => {
     nameInput.focus();
     return;
   }
+  emailInput.value = emailInput.value.trim().toLowerCase();
+  if (!emailInput.value || !emailInput.validity.valid || !EMAIL_PATTERN.test(emailInput.value)) {
+    emailInput.setAttribute('aria-invalid', 'true');
+    statusMessage.textContent = 'Introduïx un correu electrònic vàlid.';
+    emailInput.focus();
+    return;
+  }
 
   try {
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
@@ -144,17 +159,14 @@ form.addEventListener('submit', async (event) => {
     }
     const result = readResult();
     nameInput.value = result.nombre;
-    const signature = JSON.stringify(result);
-    if (signature !== pendingSignature) {
-      pendingResult = { id: crypto.randomUUID(), ...result };
-      pendingSignature = signature;
-    }
+    emailInput.value = result.correo;
+    pendingResult = result;
 
     sending = true;
     fields.disabled = true;
     form.setAttribute('aria-busy', 'true');
     saveButton.textContent = 'Guardant…';
-    const endpoint = `${SUPABASE_URL.replace(/\/$/, '')}/rest/v1/resultados`;
+    const endpoint = `${SUPABASE_URL.replace(/\/$/, '')}/rest/v1/rpc/guardar_resultado`;
     const headers = { apikey: SUPABASE_PUBLISHABLE_KEY, 'Content-Type': 'application/json' };
     // També admet la clau anon antiga. La clau publicable nova només necessita apikey.
     if (SUPABASE_PUBLISHABLE_KEY.startsWith('eyJ')) {
@@ -164,30 +176,22 @@ form.addEventListener('submit', async (event) => {
     const timeout = setTimeout(() => controller.abort(), 20000);
     try {
       const response = await fetch(endpoint, {
-        method: 'POST', headers: { ...headers, Prefer: 'return=minimal' },
-        body: JSON.stringify(pendingResult), signal: controller.signal
+        method: 'POST', headers,
+        body: JSON.stringify(Object.fromEntries(
+          Object.entries(pendingResult).map(([key, value]) => [`p_${key}`, value])
+        )),
+        signal: controller.signal
       });
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        // Una resposta perduda pot deixar la fila guardada. Confirma-la pel mateix UUID.
-        if (response.status === 409 && error.code === '23505') {
-          const check = await fetch(`${endpoint}?id=eq.${pendingResult.id}&select=*`, {
-            headers, signal: controller.signal
-          });
-          if (!check.ok) throw storageError(check, await check.json().catch(() => ({})));
-          const rows = await check.json();
-          if (!rows.some(row => Object.entries(pendingResult).every(([key, value]) => row[key] === value))) {
-            throw new Error('No s’ha pogut confirmar el guardat. Torna-ho a provar.');
-          }
-        } else {
-          throw storageError(response, error);
-        }
+        throw storageError(response, error);
       }
     } finally {
       clearTimeout(timeout);
     }
     saved = true;
     document.getElementById('resum-nom').textContent = pendingResult.nombre;
+    document.getElementById('resum-correu').textContent = pendingResult.correo;
     showScoreSummary('resum-blocs', 'Bloc', 'bloque', 10, pendingResult);
     showScoreSummary('resum-vies', 'Via', 'via', 2, pendingResult);
     document.getElementById('resum-total').textContent = `${pendingResult.total} punts`;
