@@ -1,13 +1,15 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: #fff; color: #202020; font-family: system-ui, sans-serif; line-height: 1.5; }
 main { max-width: 520px; margin: 0 auto; padding: 20px 16px 32px; overflow-anchor: none; }
-.logo { display: block; width: 100%; max-width: 256px; max-height: 256px; height: auto; object-fit: contain; margin: 0 auto 64px; }
-h1 { font-size: 1.6rem; }
+.capcalera { margin-bottom: 56px; text-align: center; }
+.logo { display: block; width: 100%; max-width: 176px; max-height: 176px; height: auto; object-fit: contain; margin: 0 auto 12px; }
+h1 { max-width: 430px; margin: 0 auto; font-size: clamp(1.55rem, 7vw, 2rem); line-height: 1.2; }
 h2 { margin-top: 28px; font-size: 1.15rem; }
 fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
 .control-anonim { display: flex; align-items: center; gap: 10px; min-height: 48px; margin-bottom: 24px; font-weight: 600; cursor: pointer; }
 .control-anonim input { width: 24px; height: 24px; margin: 0; accent-color: #202020; }
 input[type="text"], input[type="email"] { display: block; width: 100%; min-height: 48px; margin-top: 8px; padding: 10px; border: 1px solid #666; border-radius: 0; font: inherit; }
+#dades-personals > label, .genero legend { font-weight: 700; }
 .label-correu { display: block; margin-top: 24px; }
 .genero { margin-top: 24px; }
 .genero legend { margin-bottom: 8px; padding: 0; }
