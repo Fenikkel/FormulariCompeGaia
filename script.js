@@ -9,6 +9,9 @@ const identityFields = document.getElementById('dades-personals');
 const nameInput = document.getElementById('nombre');
 const emailInput = document.getElementById('correo');
 const genderGroup = document.getElementById('grup-genero');
+const nameLabel = document.querySelector('label[for="nombre"]');
+const emailLabel = document.querySelector('label[for="correo"]');
+const genderLegend = genderGroup.querySelector('legend');
 const genderInputs = [
   document.getElementById('genero-femeni'),
   document.getElementById('genero-masculi'),
@@ -23,6 +26,20 @@ let anonymousKey = null;
 const ANONYMOUS_STORAGE_KEY = 'gaia_anonymous_id';
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const requiredIndicatorTimers = new WeakMap();
+
+function flashRequiredIndicator(label) {
+  clearTimeout(requiredIndicatorTimers.get(label));
+  label.classList.remove('camp-obligatori-pendent');
+  // Força el reinici de l’animació quan es torna a prémer el botó.
+  void label.offsetWidth;
+  label.classList.add('camp-obligatori-pendent');
+  const timer = setTimeout(() => {
+    label.classList.remove('camp-obligatori-pendent');
+    requiredIndicatorTimers.delete(label);
+  }, 2000);
+  requiredIndicatorTimers.set(label, timer);
+}
 
 function getAnonymousKey() {
   if (anonymousKey) return anonymousKey;
@@ -188,6 +205,7 @@ form.addEventListener('submit', async (event) => {
   statusMessage.textContent = '';
   if (!anonymousInput.checked && !nameInput.value.trim()) {
     nameInput.setAttribute('aria-invalid', 'true');
+    flashRequiredIndicator(nameLabel);
     statusMessage.textContent = 'Introduïx el nom de l’escalador.';
     nameInput.focus();
     return;
@@ -195,12 +213,14 @@ form.addEventListener('submit', async (event) => {
   if (!anonymousInput.checked) emailInput.value = emailInput.value.trim().toLowerCase();
   if (!anonymousInput.checked && (!emailInput.value || !emailInput.validity.valid || !EMAIL_PATTERN.test(emailInput.value))) {
     emailInput.setAttribute('aria-invalid', 'true');
+    flashRequiredIndicator(emailLabel);
     statusMessage.textContent = 'Introduïx un correu electrònic vàlid.';
     emailInput.focus();
     return;
   }
   if (!anonymousInput.checked && !genderInputs.some(input => input.checked)) {
     genderGroup.setAttribute('aria-invalid', 'true');
+    flashRequiredIndicator(genderLegend);
     statusMessage.textContent = 'Selecciona una opció de gènere.';
     genderInputs[0].focus();
     return;

@@ -11,6 +11,16 @@ input[type="text"], input[type="email"] { display: block; width: 100%; min-heigh
 .label-correu { display: block; margin-top: 24px; }
 .genero { margin-top: 24px; }
 .genero legend { margin-bottom: 8px; padding: 0; }
+.camp-obligatori-pendent::after {
+  content: " *";
+  color: #005fcc;
+  font-weight: 700;
+  animation: parpelleig-obligatori 0.5s steps(1, end) 4 alternate;
+}
+@keyframes parpelleig-obligatori {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
 #formulari > section { margin-top: 40px; }
 #formulari > section > h2 { margin-top: 0; }
 .puntuacio { margin-bottom: 20px; }
