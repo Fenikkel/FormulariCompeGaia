@@ -210,6 +210,13 @@ form.addEventListener('submit', async (event) => {
     nameInput.focus();
     return;
   }
+  if (!anonymousInput.checked && nameInput.value.trim().length > 30) {
+    nameInput.setAttribute('aria-invalid', 'true');
+    flashRequiredIndicator(nameLabel);
+    statusMessage.textContent = 'El nom no pot tindre més de 30 caràcters.';
+    nameInput.focus();
+    return;
+  }
   if (!anonymousInput.checked) emailInput.value = emailInput.value.trim().toLowerCase();
   if (!anonymousInput.checked && (!emailInput.value || !emailInput.validity.valid || !EMAIL_PATTERN.test(emailInput.value))) {
     emailInput.setAttribute('aria-invalid', 'true');
