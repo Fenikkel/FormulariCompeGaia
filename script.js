@@ -8,6 +8,12 @@ const anonymousInput = document.getElementById('anonimo');
 const identityFields = document.getElementById('dades-personals');
 const nameInput = document.getElementById('nombre');
 const emailInput = document.getElementById('correo');
+const genderGroup = document.getElementById('grup-genero');
+const genderInputs = [
+  document.getElementById('genero-femeni'),
+  document.getElementById('genero-masculi'),
+  document.getElementById('genero-altre')
+];
 const saveButton = document.getElementById('guardar');
 const statusMessage = document.getElementById('estat');
 let sending = false;
@@ -56,7 +62,7 @@ function storageError(response, error) {
     return new Error('La taula exigix un camp que no s’ha enviat. Cal revisar la configuració de resultados.' + reference);
   }
   if (error.code === 'PGRST202') {
-    return new Error('No s’ha trobat la funció de guardat. Executa el fitxer supabase.sql actualitzat.' + reference);
+    return new Error('No s’ha trobat la funció de guardat. Executa migracion-genero.sql en Supabase.' + reference);
   }
   if (error.code === 'PGRST204' || error.code === 'PGRST205' || error.code === '42P01' || error.code === '42703') {
     return new Error('La base de dades no coincidix amb la configuració del formulari.' + reference);
@@ -102,9 +108,11 @@ createScores('vies', 'via', 'Via', 2, [0, 20, 50]);
 function readResult() {
   const data = new FormData(form);
   const isAnonymous = anonymousInput.checked;
+  const selectedGender = genderInputs.find(input => input.checked);
   const result = {
     nombre: isAnonymous ? 'Anònim' : nameInput.value.trim(),
-    correo: isAnonymous ? `${getAnonymousKey()}@anonim.invalid` : emailInput.value.trim().toLowerCase()
+    correo: isAnonymous ? `${getAnonymousKey()}@anonim.invalid` : emailInput.value.trim().toLowerCase(),
+    genero: isAnonymous ? 'Altre' : selectedGender?.value || ''
   };
   let total = 0;
   for (const [prefix, count, allowed] of [['bloque', 10, [0, 5, 15]], ['via', 2, [0, 20, 50]]]) {
@@ -127,13 +135,16 @@ form.addEventListener('change', () => {
 });
 nameInput.addEventListener('input', () => nameInput.removeAttribute('aria-invalid'));
 emailInput.addEventListener('input', () => emailInput.removeAttribute('aria-invalid'));
+genderInputs.forEach(input => input.addEventListener('change', () => genderGroup.removeAttribute('aria-invalid')));
 anonymousInput.addEventListener('change', () => {
   const isAnonymous = anonymousInput.checked;
   identityFields.hidden = isAnonymous;
   nameInput.disabled = isAnonymous;
   emailInput.disabled = isAnonymous;
+  genderInputs.forEach(input => { input.disabled = isAnonymous; });
   nameInput.removeAttribute('aria-invalid');
   emailInput.removeAttribute('aria-invalid');
+  genderGroup.removeAttribute('aria-invalid');
   statusMessage.textContent = '';
 });
 form.addEventListener('keydown', (event) => {
@@ -188,6 +199,12 @@ form.addEventListener('submit', async (event) => {
     emailInput.focus();
     return;
   }
+  if (!anonymousInput.checked && !genderInputs.some(input => input.checked)) {
+    genderGroup.setAttribute('aria-invalid', 'true');
+    statusMessage.textContent = 'Selecciona una opció de gènere.';
+    genderInputs[0].focus();
+    return;
+  }
 
   try {
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
@@ -230,6 +247,7 @@ form.addEventListener('submit', async (event) => {
     saved = true;
     document.getElementById('resum-nom').textContent = pendingResult.nombre;
     document.getElementById('resum-correu').textContent = pendingResult.correo;
+    document.getElementById('resum-genero').textContent = pendingResult.genero;
     const isAnonymousResult = pendingResult.correo.endsWith('@anonim.invalid');
     document.getElementById('resum-correu-etiqueta').hidden = isAnonymousResult;
     document.getElementById('resum-correu').hidden = isAnonymousResult;

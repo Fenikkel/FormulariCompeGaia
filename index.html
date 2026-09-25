@@ -23,6 +23,23 @@
           <input id="nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="estat">
           <label class="label-correu" for="correo">Correu electrònic</label>
           <input id="correo" name="correo" type="email" autocomplete="email" inputmode="email" required aria-describedby="estat">
+          <fieldset id="grup-genero" class="genero">
+            <legend>Gènere</legend>
+            <div class="opcions">
+              <label class="opcio">
+                <input id="genero-femeni" name="genero" type="radio" value="Femení">
+                <span>Femení</span>
+              </label>
+              <label class="opcio">
+                <input id="genero-masculi" name="genero" type="radio" value="Masculí">
+                <span>Masculí</span>
+              </label>
+              <label class="opcio">
+                <input id="genero-altre" name="genero" type="radio" value="Altre">
+                <span>Altre</span>
+              </label>
+            </div>
+          </fieldset>
         </div>
         <section aria-labelledby="titol-blocs">
           <h2 id="titol-blocs">BLOCS</h2>
@@ -44,6 +61,8 @@
         <dd id="resum-nom"></dd>
         <dt id="resum-correu-etiqueta">Correu electrònic</dt>
         <dd id="resum-correu"></dd>
+        <dt>Gènere</dt>
+        <dd id="resum-genero"></dd>
       </dl>
       <p class="resum-total"><span>Total</span><strong id="resum-total"></strong></p>
       <section aria-labelledby="resum-titol-blocs">

@@ -9,6 +9,8 @@ fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
 .control-anonim input { width: 24px; height: 24px; margin: 0; accent-color: #202020; }
 input[type="text"], input[type="email"] { display: block; width: 100%; min-height: 48px; margin-top: 8px; padding: 10px; border: 1px solid #666; border-radius: 0; font: inherit; }
 .label-correu { display: block; margin-top: 24px; }
+.genero { margin-top: 24px; }
+.genero legend { margin-bottom: 8px; padding: 0; }
 #formulari > section { margin-top: 40px; }
 #formulari > section > h2 { margin-top: 0; }
 .puntuacio { margin-bottom: 20px; }

@@ -11,6 +11,7 @@ create table public.resultados (
     correo ~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$'
   ),
   nombre text not null check (length(btrim(nombre)) > 0 and nombre = btrim(nombre)),
+  genero text not null check (genero in ('Femení', 'Masculí', 'Altre')),
   bloque1 smallint not null check (bloque1 in (0, 5, 15)),
   bloque2 smallint not null check (bloque2 in (0, 5, 15)),
   bloque3 smallint not null check (bloque3 in (0, 5, 15)),
@@ -44,7 +45,7 @@ before update on public.resultados
 for each row execute function public.actualizar_fecha_resultado();
 
 create function public.guardar_resultado(
-  p_correo text, p_nombre text,
+  p_correo text, p_nombre text, p_genero text,
   p_bloque1 smallint, p_bloque2 smallint, p_bloque3 smallint,
   p_bloque4 smallint, p_bloque5 smallint, p_bloque6 smallint,
   p_bloque7 smallint, p_bloque8 smallint, p_bloque9 smallint,
@@ -56,15 +57,16 @@ security definer
 set search_path = ''
 as $$
   insert into public.resultados (
-    correo, nombre, bloque1, bloque2, bloque3, bloque4, bloque5,
+    correo, nombre, genero, bloque1, bloque2, bloque3, bloque4, bloque5,
     bloque6, bloque7, bloque8, bloque9, bloque10, via1, via2, total
   ) values (
-    lower(btrim(p_correo)), btrim(p_nombre), p_bloque1, p_bloque2, p_bloque3,
+    lower(btrim(p_correo)), btrim(p_nombre), p_genero, p_bloque1, p_bloque2, p_bloque3,
     p_bloque4, p_bloque5, p_bloque6, p_bloque7, p_bloque8, p_bloque9,
     p_bloque10, p_via1, p_via2, p_total
   )
   on conflict (correo) do update set
     nombre = excluded.nombre,
+    genero = excluded.genero,
     bloque1 = excluded.bloque1, bloque2 = excluded.bloque2,
     bloque3 = excluded.bloque3, bloque4 = excluded.bloque4,
     bloque5 = excluded.bloque5, bloque6 = excluded.bloque6,
@@ -76,17 +78,17 @@ $$;
 alter table public.resultados enable row level security;
 revoke all on public.resultados from anon, authenticated;
 revoke all on function public.guardar_resultado(
-  text, text, smallint, smallint, smallint, smallint, smallint, smallint,
+  text, text, text, smallint, smallint, smallint, smallint, smallint, smallint,
   smallint, smallint, smallint, smallint, smallint, smallint, smallint
 ) from public, anon, authenticated;
 
 -- El correu no té permís de lectura pública.
 grant select (
-  id, nombre, bloque1, bloque2, bloque3, bloque4, bloque5,
+  id, nombre, genero, bloque1, bloque2, bloque3, bloque4, bloque5,
   bloque6, bloque7, bloque8, bloque9, bloque10, via1, via2, total, updated_at
 ) on public.resultados to anon;
 grant execute on function public.guardar_resultado(
-  text, text, smallint, smallint, smallint, smallint, smallint, smallint,
+  text, text, text, smallint, smallint, smallint, smallint, smallint, smallint,
   smallint, smallint, smallint, smallint, smallint, smallint, smallint
 ) to anon;
 
